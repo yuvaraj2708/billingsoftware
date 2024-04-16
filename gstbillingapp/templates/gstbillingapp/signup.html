@@ -1,0 +1,38 @@
+{% extends "gstbillingapp/base.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Sign Up</h2>
+<form method="POST">
+    {% csrf_token %}
+    <table class="table">
+        <tbody class="two-col-form">
+            {% for field in signup_form %}
+            <tr>
+                <th scope="row" class="text-right">{{ field.label_tag }}</th>
+                <td class="form-input-td">
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for field in profile_edit_form %}
+            <tr>
+                <th scope="row" class="text-right">{{ field.label_tag }}</th>
+                <td class="form-input-td">
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <input type="submit" class="btn btn-primary float-right" value="Submit">
+</form>
+{% endblock %}

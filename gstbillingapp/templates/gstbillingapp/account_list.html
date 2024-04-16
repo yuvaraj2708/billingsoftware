@@ -1,0 +1,61 @@
+<div class="container">
+    <h2>Account List</h2>
+    <ul class="account-list">
+        {% for account in accounts %}
+            <li class="account-item">
+                <span class="account-username">{{ account.user.username }}</span>
+                <a href="{% url 'edit_account' account.id %}" class="edit-link">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+    
+        <a href="{% url 'signup_view' %}"><input class="btn btn-danger float-right" value="Sign Up"></a>
+    
+</div>
+
+<style>
+    /* CSS styles for account list */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .account-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .account-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .account-username {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .edit-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .edit-link:hover {
+        text-decoration: underline;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+   
+
+    .float-right {
+        float: right;
+    }
+</style>
