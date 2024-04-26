@@ -27,6 +27,7 @@
  				<td>{{invoice.invoice_date}}</td>
  				<td>{{invoice.invoice_customer}}</td>
 				 <td><a href="{% url 'invoice_viewer' invoice.id %}"><button type="button" class="btn btn-primary">View</button></a></td>
+				 <td><a href="{% url 'invoice_edit' invoice.id %}" class="btn btn-warning">Sales return</a></td>
 				 <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#invoiceDeleteModal" data-invoice-id="{{invoice.id}}" data-invoice-number="{{invoice.invoice_number}}, for {{invoice.invoice_customer}}">Delete</button></td>
 			</tr>
 			{% endfor %}

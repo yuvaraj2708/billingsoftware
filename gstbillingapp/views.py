@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime,date
 import json
 import num2words
 from django.contrib.auth.forms import PasswordChangeForm
@@ -13,16 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import update_session_auth_hash
-from .models import Customer
-from .models import Invoice
-from .models import Product
-from .models import UserProfile
-from .models import Inventory
-from .models import InventoryLog
-from .models import Book
-from .models import BookLog
-
-
+from .models import *
 from .utils import invoice_data_validator
 from .utils import invoice_data_processor
 from .utils import update_products_from_invoice
@@ -36,7 +27,7 @@ from .forms import CustomerForm
 from .forms import ProductForm
 from .forms import UserProfileForm
 from .forms import InventoryLogForm
-from .forms import BookLogForm
+from .forms import *
 from django.contrib.auth import login, authenticate
 # Create your views here.
 
@@ -176,6 +167,19 @@ def signup_view(request):
 
 
 # Invoice, products and customers ===============================================
+@login_required
+def invoice_edit(request, invoice_id):
+    invoice_obj = get_object_or_404(Invoice, user=request.user, id=invoice_id)
+    # You may need to populate the form with existing data from the invoice object
+    form = InvoiceForm(instance=invoice_obj)
+
+    if request.method == 'POST':
+        form = InvoiceForm(request.POST, instance=invoice_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('invoice_viewer', invoice_id=invoice_id)
+
+    return render(request, 'gstbillingapp/invoice_edit.html', {'form': form})
 
 @login_required
 def invoice_create(request):
@@ -192,8 +196,10 @@ def invoice_create(request):
     else:
         context['default_invoice_number'] += 1
 
-    context['default_invoice_date'] = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
+    
+    context['default_invoice_date'] = datetime.now().strftime('%Y-%m-%d')
 
+ 
     if request.method == 'POST':
         print("POST received - Invoice Data")
 
@@ -243,7 +249,8 @@ def invoice_create(request):
         invoice_data_processed_json = json.dumps(invoice_data_processed)
         new_invoice = Invoice(user=request.user,
                               invoice_number=int(invoice_data['invoice-number']),
-                              invoice_date=datetime.datetime.strptime(invoice_data['invoice-date'], '%Y-%m-%d'),
+                              invoice_date=datetime.strptime(invoice_data['invoice-date'], '%Y-%m-%d'),
+                              
                               invoice_customer=customer, invoice_json=invoice_data_processed_json)
         new_invoice.save()
         print("INVOICE SAVED")
@@ -510,7 +517,25 @@ def book_logs_add(request, book_id):
 
 
 # ================= Static Pages ==============================
-
+@login_required
 def landing_page(request):
-    context = {}
+    # Retrieve the logged-in user
+    current_user = request.user
+
+    # Calculate total inventory for the current user
+    total_inventory_count = Inventory.objects.filter(user=current_user).aggregate(total_inventory=models.Sum('current_stock'))['total_inventory']
+
+    # Calculate today's inventory for the current user
+    today = date.today()
+    today_inventory_count = Inventory.objects.filter(user=current_user, last_log__date__date=today).aggregate(today_inventory=models.Sum('current_stock'))['today_inventory']
+
+    # Calculate total customers for the current user
+    total_customers_count = Customer.objects.filter(user=current_user).count()
+
+    context = {
+        'total_inventory_count': total_inventory_count,
+        'today_inventory_count': today_inventory_count,
+        'total_customers_count': total_customers_count,
+        # Add other variables as needed
+    }
     return render(request, 'gstbillingapp/pages/landing_page.html', context)

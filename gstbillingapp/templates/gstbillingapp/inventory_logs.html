@@ -36,6 +36,8 @@
 			<td>{{item.get_change_type_display}} {% if item.associated_invoice %}<a href="{% url 'invoice_viewer' item.associated_invoice.id %}">[INVOICE]</a>{% endif %}</td>
 			<td>{{item.description}}</td>
 			<td class="text-right">{{item.change}} &emsp; {{inventory.product.product_unit}}</td>
+			<td><a href="{% url 'invoice_edit' invoice_id=invoice.id %}" class="btn btn-info">Edit</a></td>
+
 		{% endfor %}
 	</tbody>
 </table>

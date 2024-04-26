@@ -1,10 +1,10 @@
 from django.forms import ModelForm
-from .models import Customer
+from .models import *
 from .models import Product
 from .models import UserProfile
 from .models import InventoryLog
 from .models import BookLog
-
+from django import forms
 
 class CustomerForm(ModelForm):
      class Meta:
@@ -40,3 +40,8 @@ class BookLogForm(ModelForm):
     class Meta:
         model = BookLog
         fields = ['date', 'change', 'change_type', 'description']
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ['invoice_number', 'invoice_date', 'invoice_customer','invoice_customer', 'invoice_json']
